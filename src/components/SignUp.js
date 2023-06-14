@@ -21,7 +21,7 @@ const SignUp = ({ existingMember }) => {
     const createUser = (formValues) => {
 
         const { email, password } = formValues
-        registerUser(email, password)
+        registerUser(email, password, existingMember)
 
     }
 

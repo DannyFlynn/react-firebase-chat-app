@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { auth } from '../firebase-config';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 
@@ -8,10 +7,13 @@ const cookies = new Cookies();
 export const useUser = () => {
 
 
-    const registerUser = async (registerEmail, registerPassword) => {
+    const registerUser = async (registerEmail, registerPassword, existingMember) => {
         try {
             await createUserWithEmailAndPassword(auth, registerEmail, registerPassword);
+            await existingMember();
+            alert('User created successfully please login');
         } catch (err) {
+            alert(err.message.split("Firebase:").slice(1));
             return false;
         }
     }
@@ -24,17 +26,15 @@ export const useUser = () => {
                 loginPassword
             );
             const user = userCredential.user;
-            console.log(user)
-            console.log(userCredential.user.email)
             cookies.set("auth-token", user.reloadUserInfo.localId);
             const email = userCredential.user.email;
             const name = email.split("@")[0];
-            console.log(name);
             cookies.set("user", name);
             setIsAuth(true);
 
         } catch (error) {
-            console.log(error.message);
+
+            alert(error.message.split("Firebase:").slice(1));
         }
     };
 
@@ -47,7 +47,8 @@ export const useUser = () => {
             window.location.reload();
 
         } catch (err) {
-            console.log(err);
+
+            alert(err.message.split("Firebase:").slice(1));
         }
     }
 

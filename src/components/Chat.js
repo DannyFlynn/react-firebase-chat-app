@@ -16,20 +16,9 @@ const Chat = ({ setIsAuth }) => {
 
     const [username, setUsername] = useState("");
     const [newMessage, setNewMessage] = useState("");
-    const [messages, setMessages] = useState([
-        { user: 'dan', text: 'testing, I am Testing to I am Testing to I am Testing to I am Testing to I am Testing to I am Testing to I am Testing to I am Testing to I am Testing to' },
-        { user: 'nicki', text: 'I am Testing too' },
-        { user: 'tommy', text: 'Mr testing' },
-        { user: 'dan', text: 'all of us are testing' },
-        { user: 'dan', text: 'testing' },
-        { user: 'nicki', text: 'I am Testing too' },
-        { user: 'tommy', text: 'Mr testing' },
-        { user: 'dan', text: 'all of us are testing' },
-        { user: 'dan', text: 'testing' },
-        { user: 'nicki', text: 'I am Testing too' },
-        { user: 'tommy', text: 'Mr testing' },
-        { user: 'dan', text: 'all of us are testing' },
-    ]);
+
+
+    const [messages, setMessages] = useState([]);
 
     const messagesRef = collection(db, "messages");
 
@@ -42,22 +31,20 @@ const Chat = ({ setIsAuth }) => {
 
     }, [])
 
-    // useEffect(() => {
-    //     console.log('snap render')
-    //     const q = query(messagesRef, orderBy("createdAt"), limit(10));
-    //     const unsubscribe = onSnapshot(q, (snapshot) => {
-    //         const updatedMessages = snapshot.docs.map((doc) => ({
-    //             id: doc.id,
-    //             ...doc.data(),
-    //         }));
-    //         setMessages(updatedMessages);
-    //     });
+    useEffect(() => {
+        console.log('snap render')
+        const q = query(messagesRef, orderBy("createdAt", "desc"), limit(10)); // Order messages by createdAt in descending order
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const updatedMessages = snapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            })).reverse(); // Reverse the order to display the messages chronologically
+            setMessages(updatedMessages);
+        });
 
-    //     // Clean up the listener when the component unmounts
-    //     return () => unsubscribe();
-    // }, [])
-
-
+        // Clean up the listener when the component unmounts
+        return () => unsubscribe();
+    }, []);
 
 
     // custom hook
